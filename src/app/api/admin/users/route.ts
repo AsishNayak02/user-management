@@ -22,17 +22,20 @@ export async function GET(req: Request) {
   const accessToken = authHeader.split(' ')[1];
 
   try {
-    const decodedToken = jwt.decode(accessToken) as DecodedUserToken | null;
-    if (!decodedToken) {
-        throw new Error('Invalid token');
-    }
-    const orgArray = decodedToken.organization;
-    const userOrganization = (orgArray && orgArray.length > 0) ? orgArray[0] : null;
+    // const decodedToken = jwt.decode(accessToken) as DecodedUserToken | null;
+    // if (!decodedToken) {
+    //     throw new Error('Invalid token');
+    // }
+    // const orgArray = decodedToken.organization;
+    // const userOrganization = (orgArray && orgArray.length > 0) ? orgArray[0] : null;
 
-    if (!userOrganization) {
-      return NextResponse.json({ message: 'User is not part of an organization.' }, { status: 403 });
-    }
-    const { data } = await axios.get(`${KEYCLOAK_USERS_URL}?q=organization:${userOrganization}`, {
+    // if (!userOrganization) {
+    //   return NextResponse.json({ message: 'User is not part of an organization.' }, { status: 403 });
+    // }
+    // const { data } = await axios.get(`${KEYCLOAK_USERS_URL}?q=organization:${userOrganization}`, {
+    //   headers: { Authorization: authHeader },
+    // });
+    const { data } = await axios.get(`${KEYCLOAK_USERS_URL}`, {
       headers: { Authorization: authHeader },
     });
     const clearUserData = data.map((user: any) => {

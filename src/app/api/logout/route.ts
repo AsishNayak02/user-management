@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
-const KEYCLOAK_LOGOUT_URL = `${process.env.KEYCLOAK_BASE_URL}/realms/myrealm/protocol/openid-connect/logout`;
+const KEYCLOAK_LOGOUT_URL = `${process.env.KEYCLOAK_BASE_URL}/realms/${process.env.KEYCLOAK_REALM}/protocol/openid-connect/logout`;
 const CLIENT_ID = process.env.CLIENT_ID??'';
 const CLIENT_SECRET = process.env.CLIENT_SECRET??'';
 
