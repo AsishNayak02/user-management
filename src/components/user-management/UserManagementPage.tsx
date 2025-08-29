@@ -1,19 +1,12 @@
 "use client"
-import { AppSidebar } from "@/components/app-sidebar"
-import { DataTableDemo } from "@/components/user-management/UserTable"
+import { getAllUsers } from "@/api/userListing"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { DataTableDemo } from "@/components/user-management/UserTable"
 import { AddUserForm } from "@/input-components/AddUserForm"
-import Logout from "@/input-components/Logout"
 import { USER_ATTR } from "@/lib/utils.user"
-import { ListFilter, UserRoundPlus } from "lucide-react"
-import React, { useEffect, useState } from "react"
-import { getAllUsers } from "@/api/userListing"
+import { ListFilter } from "lucide-react"
+import { useEffect, useState } from "react"
 
 
 export default function UserManagementPage() {

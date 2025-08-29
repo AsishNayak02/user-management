@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import { usePathname, useRouter } from "next/navigation";
 import { FC, useEffect } from "react";
 import Cookies from "js-cookie";
+import { TokenPopUp } from "@/input-components/TokenPopUp";
 
 
 interface ICustomLayout {
@@ -53,6 +54,7 @@ const CustomLayout: FC<ICustomLayout> = ({ children }) => {
                     </div>
                 </header>
                 {children}
+                <TokenPopUp />
             </SidebarInset>
         </SidebarProvider> : children}
     </>

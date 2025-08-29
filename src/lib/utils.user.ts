@@ -17,3 +17,11 @@ export type USER_ATTR = {
   groups: string
 }
 
+
+export interface DecodedToken {
+  exp: number; // expiry timestamp (seconds since epoch)
+  name?: string;
+  realm_access?: { roles?: string[] };
+  organization?: string[];
+  groups?: string[];
+}
