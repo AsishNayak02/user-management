@@ -24,7 +24,7 @@ const CustomLayout: FC<ICustomLayout> = ({ children }) => {
         // const accessToken = localStorage.getItem("AccessToken");
         const accessToken = Cookies.get("AccessToken");
 
-        if (accessToken && pathname !== '/login') {
+        if (accessToken && (pathname !== '/login' && pathname !== '/')) {
             const decoded: any = jwtDecode(accessToken);
             dispatch(updateAuth({ name: decoded?.name, role: decoded?.realm_access?.roles, organization: decoded?.organization?.[0]??'', group: decoded?.groups?.[0]??'', isLogged: true }));
         }
@@ -36,9 +36,9 @@ const CustomLayout: FC<ICustomLayout> = ({ children }) => {
         // const refreshToken = localStorage.getItem("RefreshToken");
         const accessToken = Cookies.get("AccessToken");
         const refreshToken = Cookies.get("RefreshToken");
-        if (!accessToken || !refreshToken) {
+        if ((!accessToken || !refreshToken) && (pathname !== '/login' && pathname !== '/')) {
             dispatch(clearAuth());
-            router.replace('/login');
+            router.replace('/');
         }
 
     }, [pathname,isLoggedIn])
