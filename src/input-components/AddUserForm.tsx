@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useFormik } from "formik"
 import { UserRoundPlus } from "lucide-react"
 import { useState } from "react"
+import axios from "@/api/index"
 
 const initialUserDetails = {
     organization: "",
@@ -30,6 +31,9 @@ const initialUserDetails = {
 
 export function AddUserForm() {
     const [step, setStep] = useState(1);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: initialUserDetails,
@@ -41,21 +45,44 @@ export function AddUserForm() {
         //     }
         //     return {};
         // },
-        onSubmit: (values: any, action: any) => {
-            // handleFormSubmit(values);
+        onSubmit: async (values: any, action: any) => {
             if (step < 3) {
                 // ✅ Go to next step if valid
                 setStep(step + 1)
             } else {
                 // ✅ Final submit
-                console.log("Final user:", values)
-                // handleFormSubmit(values)
+                setIsSubmitting(true);
+                try {
+                    console.log("Creating user:", values);
+                    const response = await axios.post("/api/admin/create-user", {
+                        username: values.username,
+                        email: values.email,
+                        password: values.password,
+                        organization: values.organization,
+                        group: values.group,
+                        firstName: values.firstName,
+                        lastName: values.lastName
+                    });
+                    
+                    console.log("User created successfully:", response.data);
+                    // Reset form and close dialog
+                    formik.resetForm();
+                    setStep(1);
+                    setIsOpen(false);
+                    // You might want to refresh the user list here
+                    window.location.reload(); // Simple refresh for now
+                } catch (error) {
+                    console.error("Error creating user:", error);
+                    alert("Failed to create user. Please try again.");
+                } finally {
+                    setIsSubmitting(false);
+                }
             }
         },
     });
 
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
                 <Button><UserRoundPlus />Add User</Button>
             </DialogTrigger>
@@ -206,11 +233,13 @@ export function AddUserForm() {
                         ) : (
                             <>
                                 <DialogClose asChild>
-                                    <Button type="button" variant="outline">
+                                    <Button type="button" variant="outline" disabled={isSubmitting}>
                                         Cancel
                                     </Button>
                                 </DialogClose>
-                                <Button type="submit">Save User</Button>
+                                <Button type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? "Saving..." : "Save User"}
+                                </Button>
                             </>
                         )}
                     </DialogFooter>

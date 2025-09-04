@@ -75,16 +75,26 @@ export const columns: ColumnDef<USER_ATTR>[] = [
   {
     accessorKey: "organization",
     header: "Organization",
-    cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("organization")}</div>
-    ),
+    cell: ({ row }) => {
+      const org = row?.getValue("organization");
+      return (
+        <div className="capitalize">
+          {Array.isArray(org) ? org.join(", ") : org}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "groups",
     header: "Group",
-    cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("groups")}</div>
-    ),
+    cell: ({ row }) => {
+      const groups = row?.getValue("groups");
+      return (
+        <div className="capitalize">
+          {Array.isArray(groups) ? groups.join(", ") : groups}
+        </div>
+      );
+    },
   },
   {
     id: "actions",

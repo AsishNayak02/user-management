@@ -46,8 +46,8 @@ export async function GET(req: Request) {
         email,
         firstName,
         lastName,
-        organization: attributes?.organization || [],
-        groups: attributes?.groups || [],
+        organization: Array.isArray(attributes?.organization) ? attributes.organization : (attributes?.organization ? [attributes.organization] : []),
+        groups: Array.isArray(attributes?.groups) ? attributes.groups : (attributes?.groups ? [attributes.groups] : []),
       };
     })
     return NextResponse.json(clearUserData);
