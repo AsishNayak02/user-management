@@ -20,31 +20,48 @@ const CustomLayout: FC<ICustomLayout> = ({ children }) => {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const pathname = usePathname();
+    const isAuthPage = !!pathname && (pathname === "/login" || pathname === "/session-expired");
     useEffect(() => {
+
+        if (!pathname || isAuthPage) return;
+
         // const accessToken = localStorage.getItem("AccessToken");
         const accessToken = Cookies.get("AccessToken");
+        if (!accessToken) return;
 
-        if (accessToken && (pathname !== '/login' && pathname !== '/')) {
-            const decoded: any = jwtDecode(accessToken);
-            dispatch(updateAuth({ name: decoded?.name, role: decoded?.realm_access?.roles, organization: decoded?.organization?.[0]??'', group: decoded?.groups?.[0]??'', isLogged: true }));
-        }
+        try {
+      const decoded: any = jwtDecode(accessToken);
+      dispatch(
+        updateAuth({
+          name: decoded?.name,
+          role: decoded?.realm_access?.roles,
+          organization: decoded?.organization?.[0] ?? "",
+          group: decoded?.groups?.[0] ?? "",
+          isLogged: true,
+        })
+      );
+    } catch (err) {
+      dispatch(clearAuth());
+      router.replace("/session-expired");
+    }
+  }, [pathname, dispatch, router, isAuthPage]);
 
-    }, [])
+  useEffect(() => {
+    if (!pathname || isAuthPage) return;
 
-    useEffect(() => {
-        // const accessToken = localStorage.getItem("AccessToken");
-        // const refreshToken = localStorage.getItem("RefreshToken");
-        const accessToken = Cookies.get("AccessToken");
-        const refreshToken = Cookies.get("RefreshToken");
-        if ((!accessToken || !refreshToken) && (pathname !== '/login' && pathname !== '/')) {
-            dispatch(clearAuth());
-            router.replace('/');
-        }
+    const accessToken = Cookies.get("AccessToken");
+    const refreshToken = Cookies.get("RefreshToken");
 
-    }, [pathname,isLoggedIn])
+    // if tokens missing -> clear and redirect to session-expired (only for non-auth pages)
+    if (!accessToken || !refreshToken) {
+      dispatch(clearAuth());
+      router.replace("/session-expired");
+    }
+  }, [pathname, isLoggedIn, dispatch, router, isAuthPage]);
+
 
     return (<>
-        {isLoggedIn ? <SidebarProvider>
+        {isLoggedIn && !isAuthPage ? <SidebarProvider>
             <AppSidebar />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 border-b">

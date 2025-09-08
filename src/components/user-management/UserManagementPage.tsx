@@ -25,7 +25,7 @@ export default function UserManagementPage() {
           </div>
           <div className="flex flex-col gap-2">
             <div className="flex flex-row items-center justify-between">
-              <span>All Users <span>44</span></span>
+              <span>All Users <span>({rows?.length??0})</span></span>
               <div className="flex flex-row items-center gap-x-3">
               <Input placeholder="Search users..." className="w-xs ml-4" />
               <Button><ListFilter />Filter</Button>

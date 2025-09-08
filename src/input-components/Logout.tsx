@@ -17,7 +17,6 @@ const Logout = () => {
     const handleLogout = () => {
         userLogout()
             .then((res) => {
-                router.replace('/login');
                 dispatch(clearAuth());
             })
             .catch((err) => { console.log(err) })

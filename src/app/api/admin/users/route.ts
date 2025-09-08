@@ -1,8 +1,6 @@
 // app/api/admin/users/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
-import jwt from 'jsonwebtoken';
-
 
 interface DecodedUserToken {
   organization: string[]; 
@@ -19,7 +17,7 @@ export async function GET(req: Request) {
       { status: 401 }
     );
   }
-  const accessToken = authHeader.split(' ')[1];
+  // const accessToken = authHeader.split(' ')[1];
 
   try {
     // const decodedToken = jwt.decode(accessToken) as DecodedUserToken | null;
@@ -47,7 +45,7 @@ export async function GET(req: Request) {
         firstName,
         lastName,
         organization: attributes?.organization || [],
-        groups: attributes?.groups || [],
+        groups: attributes?.group || [],
       };
     })
     return NextResponse.json(clearUserData);

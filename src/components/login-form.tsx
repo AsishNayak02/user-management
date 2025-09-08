@@ -40,9 +40,7 @@ export function LoginForm({
         if(accessToken){
           const decoded:any = jwtDecode(accessToken);
           router.push('/userManagement');
-          setTimeout(() => {
             dispatch(updateAuth({ name: decoded?.name, role: decoded?.realm_access?.roles, organization: decoded?.organization?.[0]??'', group: decoded?.groups?.[0]??'', isLogged: true }));
-          }, 100);
         }
       })
       .catch((err) => { console.log(err) })
