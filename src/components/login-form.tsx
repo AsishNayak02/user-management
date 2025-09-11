@@ -45,7 +45,7 @@ export function LoginForm({
           }, 100);
         }
       })
-      .catch((err) => { console.log(err) })
+      .catch((err) => { /* Error handled silently */ })
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
