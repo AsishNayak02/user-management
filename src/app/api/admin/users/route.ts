@@ -1,8 +1,6 @@
 // app/api/admin/users/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
-import jwt from 'jsonwebtoken';
-
 
 interface DecodedUserToken {
   organization: string[]; 
