@@ -1,38 +1,63 @@
-// app/api/admin/create-user/route.js
+// app/api/admin/users/[id]/route.ts
 "use server";
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
-const KEYCLOAK_ADMIN_URL = `${process.env.KEYCLOAK_BASE_URL}/admin/realms/myrealm`;
-async function getAdminToken() {
-    const tokenUrl = `${process.env.KEYCLOAK_BASE_URL}/realms/myrealm/protocol/openid-connect/token`;
+const KEYCLOAK_ADMIN_URL = `${process.env.KEYCLOAK_BASE_URL}/admin/realms/${process.env.KEYCLOAK_REALM}/users`;
 
-    const params = new URLSearchParams();
-    params.append("client_id", process.env.CLIENT_ID!);
-    params.append("client_secret", process.env.CLIENT_SECRET!);
-    params.append("grant_type", "client_credentials");
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+    const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+        return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
+    }
 
-    const { data } = await axios.post(tokenUrl, params.toString(), {
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    });
-    console.log({"accessToken": data.access_token});
+    try {
+        const { id } = await params;
+        const { username, email, firstName, lastName, organization, group } = await req.json();
 
-    return data.access_token;
+        const updateData = {
+            username,
+            email,
+            firstName,
+            lastName,
+            attributes: {
+                organization: organization,
+                groups: group,
+            },
+        };
+
+        await axios.put(
+            `${KEYCLOAK_ADMIN_URL}/${id}`,
+            updateData,
+            { headers: { Authorization: authHeader, 'Content-Type': 'application/json' } }
+        );
+
+        return NextResponse.json({ message: 'User updated successfully' });
+    } catch (err: any) {
+        return NextResponse.json({ 
+            error: err.response?.data?.errorMessage || err.message || 'Internal server error',
+            details: err.response?.data
+        }, { status: err.response?.status || 500 });
+    }
 }
 
-export async function DELETE(req: Request,{ params }: { params: { id: string } }) {
-    const authHeader = await getAdminToken();
+export async function DELETE(req: Request,{ params }: { params: Promise<{ id: string }> }) {
+    const authHeader = req.headers.get("authorization");
     if (!authHeader) {
         return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
     }
     try {
+        const { id } = await params;
         await axios.delete(
-            `${KEYCLOAK_ADMIN_URL}/users/${params.id}`,
-            { headers: { Authorization: `Bearer ${authHeader}`, 'Content-Type': 'application/json' } }
+            `${KEYCLOAK_ADMIN_URL}/${id}`,
+            { headers: { Authorization: authHeader, 'Content-Type': 'application/json' } }
         );
 
         return NextResponse.json({ message: 'User Deleted successfully' });
     } catch (err: any) {
-        return NextResponse.json({ error: err.message }, { status: err.response?.status || 400 });
+        return NextResponse.json({ 
+            error: err.response?.data?.errorMessage || err.message || 'Internal server error',
+            details: err.response?.data
+        }, { status: err.response?.status || 500 });
     }
 }

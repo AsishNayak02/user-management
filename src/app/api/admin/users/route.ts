@@ -17,25 +17,50 @@ export async function GET(req: Request) {
       { status: 401 }
     );
   }
-  // const accessToken = authHeader.split(' ')[1];
+
+  // Get search parameters from URL
+  const { searchParams } = new URL(req.url);
+  const searchTerm = searchParams.get('search') || '';
+  const searchField = searchParams.get('field') || 'username'; // Default to username search
 
   try {
-    // const decodedToken = jwt.decode(accessToken) as DecodedUserToken | null;
-    // if (!decodedToken) {
-    //     throw new Error('Invalid token');
-    // }
-    // const orgArray = decodedToken.organization;
-    // const userOrganization = (orgArray && orgArray.length > 0) ? orgArray[0] : null;
+    let data: any[] = [];
 
-    // if (!userOrganization) {
-    //   return NextResponse.json({ message: 'User is not part of an organization.' }, { status: 403 });
-    // }
-    // const { data } = await axios.get(`${KEYCLOAK_USERS_URL}?q=organization:${userOrganization}`, {
-    //   headers: { Authorization: authHeader },
-    // });
-    const { data } = await axios.get(`${KEYCLOAK_USERS_URL}`, {
-      headers: { Authorization: authHeader },
-    });
+    if (searchTerm) {
+      // For comprehensive search, we need to search multiple fields
+      // Keycloak doesn't support OR queries, so we'll search each field separately
+      const searchFields = searchField === 'all' 
+        ? ['username', 'email', 'firstName', 'lastName']
+        : [searchField];
+
+      const searchPromises = searchFields.map(field => {
+        const fieldUrl = `${KEYCLOAK_USERS_URL}?${field}=${encodeURIComponent(searchTerm)}`;
+        
+        return axios.get(fieldUrl, {
+          headers: { Authorization: authHeader },
+        }).then(response => response.data).catch(error => {
+          console.warn(`Search failed for ${field}:`, error.message);
+          return []; // Return empty array if search fails
+        });
+      });
+
+      // Wait for all searches to complete
+      const searchResults = await Promise.all(searchPromises);
+      
+      // Combine and deduplicate results
+      const allUsers = searchResults.flat();
+      const uniqueUsers = allUsers.filter((user, index, self) => 
+        index === self.findIndex(u => u.id === user.id)
+      );
+      
+      data = uniqueUsers;
+    } else {
+      // No search term, get all users
+      const response = await axios.get(KEYCLOAK_USERS_URL, {
+        headers: { Authorization: authHeader },
+      });
+      data = response.data;
+    }
     const clearUserData = data.map((user: any) => {
       const { id, username, email, firstName, lastName, attributes } = user;
       return {
@@ -44,8 +69,8 @@ export async function GET(req: Request) {
         email,
         firstName,
         lastName,
-        organization: attributes?.organization || [],
-        groups: attributes?.group || [],
+        organization: Array.isArray(attributes?.organization) ? attributes.organization[0] : (attributes?.organization || ''),
+        groups: Array.isArray(attributes?.groups) ? attributes.groups[0] : (attributes?.groups || ''),
       };
     })
     return NextResponse.json(clearUserData);

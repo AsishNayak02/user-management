@@ -43,7 +43,7 @@ export function LoginForm({
             dispatch(updateAuth({ name: decoded?.name, role: decoded?.realm_access?.roles, organization: decoded?.organization?.[0]??'', group: decoded?.groups?.[0]??'', isLogged: true }));
         }
       })
-      .catch((err) => { console.log(err) })
+      .catch((err) => { /* Error handled silently */ })
   }
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>

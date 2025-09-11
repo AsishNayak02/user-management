@@ -33,10 +33,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { USER_ATTR } from "@/lib/utils.user"
+import { EditUserForm } from "@/input-components/EditUserForm"
+import { DeleteUserDialog } from "@/input-components/DeleteUserDialog"
 
 interface UserTableProps {
   rows: USER_ATTR[];
   setRows: React.Dispatch<React.SetStateAction<USER_ATTR[]>>;
+  onUserUpdated: () => void;
 }
 
 
@@ -75,22 +78,33 @@ export const columns: ColumnDef<USER_ATTR>[] = [
   {
     accessorKey: "organization",
     header: "Organization",
-    cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("organization")}</div>
-    ),
+    cell: ({ row }) => {
+      const org = row?.getValue("organization") as string;
+      return (
+        <div className="capitalize">
+          {org}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "groups",
     header: "Group",
-    cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("groups")}</div>
-    ),
+    cell: ({ row }) => {
+      const groups = row?.getValue("groups") as string;
+      return (
+        <div className="capitalize">
+          {groups}
+        </div>
+      );
+    },
   },
   {
     id: "actions",
     enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row?.original
+    cell: ({ row, table }) => {
+      const user = row?.original
+      const onUserUpdated = (table.options.meta as any)?.onUserUpdated
 
       return (
         <DropdownMenu>
@@ -102,14 +116,9 @@ export const columns: ColumnDef<USER_ATTR>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
-            >
-              Copy payment ID
-            </DropdownMenuItem>
+            <EditUserForm user={user} onUserUpdated={onUserUpdated} />
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DeleteUserDialog user={user} onUserDeleted={onUserUpdated} />
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -117,7 +126,7 @@ export const columns: ColumnDef<USER_ATTR>[] = [
   },
 ]
 
-export const UserTable: React.FC<UserTableProps> = ({ rows, setRows }) => {
+export const DataTableDemo: React.FC<UserTableProps> = ({ rows, setRows, onUserUpdated }) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -148,6 +157,9 @@ export const UserTable: React.FC<UserTableProps> = ({ rows, setRows }) => {
         pageSize: 5,
         pageIndex: 0
       },
+    },
+    meta: {
+      onUserUpdated,
     }
   })
 

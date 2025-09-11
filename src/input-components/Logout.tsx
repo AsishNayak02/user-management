@@ -19,7 +19,7 @@ const Logout = () => {
             .then((res) => {
                 dispatch(clearAuth());
             })
-            .catch((err) => { console.log(err) })
+            .catch((err) => { /* Error handled silently */ })
     }
     return (
         <div className=' flex flex-row items-center gap-2'>
