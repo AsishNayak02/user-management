@@ -1,9 +1,11 @@
-import RoleDefinition from '@/components/role-definition/RoleDefinition'
+import RoleDefinitionPage from '@/components/role-definition/RoleDefinitionPage'
 import React from 'react'
 
 const page = () => {
   return (
-    <div><RoleDefinition/></div>
+    <div>
+      <RoleDefinitionPage />
+    </div>
   )
 }
 

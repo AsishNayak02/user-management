@@ -2,7 +2,7 @@
 import { getAllUsers, searchUsers } from "@/api/userListing"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { UserTable } from "@/components/user-management/UserTable"
+import { DataTableDemo } from "@/components/user-management/UserTable"
 import { AddUserForm } from "@/components/user-management/AddUserForm"
 import { USER_ATTR } from "@/lib/utils.user"
 import { ListFilter } from "lucide-react"
