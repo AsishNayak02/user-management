@@ -144,3 +144,12 @@ pre {
     @apply bg-background text-foreground;
   }
 }
+
+@theme {
+  --color-primaryBlue: hsl(203.89 88.28% 53.14%);
+  --color-success: hsl(159.78 100% 36.08%);
+  --color-warning: hsl(42.03 92.83% 56.27%);
+  --color-destructive: hsl(356.30 90.56% 54.31%);
+  --color-muted: hsl(240 1.96% 90%);
+  --color-foregroundText: hsl(210 25% 7.84%);
+}

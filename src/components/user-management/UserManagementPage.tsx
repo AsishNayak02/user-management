@@ -2,8 +2,8 @@
 import { getAllUsers } from "@/api/userListing"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { DataTableDemo } from "@/components/user-management/UserTable"
-import { AddUserForm } from "@/input-components/AddUserForm"
+import { UserTable } from "@/components/user-management/UserTable"
+import { AddUserForm } from "@/components/user-management/AddUserForm"
 import { USER_ATTR } from "@/lib/utils.user"
 import { ListFilter } from "lucide-react"
 import { useEffect, useState } from "react"
@@ -33,7 +33,7 @@ export default function UserManagementPage() {
               </div>
             </div>
             <div>
-              <DataTableDemo rows={rows} setRows={setRows}></DataTableDemo>
+              <UserTable rows={rows} setRows={setRows}></UserTable>
             </div>
           </div>
         </div>

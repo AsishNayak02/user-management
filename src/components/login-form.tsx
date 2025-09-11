@@ -39,7 +39,7 @@ export function LoginForm({
         // localStorage.setItem("RefreshToken", refreshToken || "");
         if(accessToken){
           const decoded:any = jwtDecode(accessToken);
-          router.push('/userManagement');
+          router.push('/user-management');
             dispatch(updateAuth({ name: decoded?.name, role: decoded?.realm_access?.roles, organization: decoded?.organization?.[0]??'', group: decoded?.groups?.[0]??'', isLogged: true }));
         }
       })
@@ -55,9 +55,9 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="grid gap-6">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full border-primaryBlue">
 
                 Login with SAML
               </Button>
@@ -96,7 +96,7 @@ export function LoginForm({
                     required
                   />
                 </div>
-                <Button onClick={handleSubmit} className="w-full">
+                <Button onClick={handleSubmit} className="w-full cursor-pointer">
                   Login
                 </Button>
               </div>

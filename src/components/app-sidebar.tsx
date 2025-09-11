@@ -35,12 +35,12 @@ const data = {
       items: [
         {
           title: "User Management",
-          url: "/userManagement",
+          url: "/user-management",
           isActive: true,
         },
         {
           title: "Role Definition",
-          url: "#",
+          url: "/role-definition",
         },
         {
           title: "User-Role Mapping",

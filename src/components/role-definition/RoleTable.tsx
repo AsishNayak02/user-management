@@ -42,48 +42,32 @@ interface UserTableProps {
 
 export const columns: ColumnDef<USER_ATTR>[] = [
   {
-    accessorKey: "username",
-    header: "UserName",
+    accessorKey: "rolename",
+    header: "Role Name",
     cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("username")}</div>
+      <div className="capitalize">{row?.getValue("name")}</div>
     ),
   },
   {
-    accessorKey: "email",
+    accessorKey: "access",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Email
+          Access
           <ArrowUpDown />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row?.getValue("email")}</div>,
+    cell: ({ row }) => <div className="lowercase">{row?.getValue("access")}</div>,
   },
   {
-    accessorKey: "firstName",
-    header: "Name",
-    cell: ({ row }) => {
-      const firstName = row.getValue("firstName") as string
-      const lastName = row.original.lastName as string // ✅ get directly from row.original
-      return <div className="capitalize">{firstName} {lastName}</div>
-    },
-  },
-  {
-    accessorKey: "organization",
-    header: "Organization",
+    accessorKey: "description",
+    header: "Description",
     cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("organization")}</div>
-    ),
-  },
-  {
-    accessorKey: "groups",
-    header: "Group",
-    cell: ({ row }) => (
-      <div className="capitalize">{row?.getValue("groups")}</div>
+      <div className="capitalize">{row?.getValue("description")}</div>
     ),
   },
   {
@@ -102,13 +86,13 @@ export const columns: ColumnDef<USER_ATTR>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(payment.id)}
             >
-              Copy payment ID
+              Assign More
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
+            <DropdownMenuItem>Delete</DropdownMenuItem>
             <DropdownMenuItem>View payment details</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -117,7 +101,7 @@ export const columns: ColumnDef<USER_ATTR>[] = [
   },
 ]
 
-export const UserTable: React.FC<UserTableProps> = ({ rows, setRows }) => {
+export const RolesTable: React.FC<UserTableProps> = ({ rows, setRows }) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
